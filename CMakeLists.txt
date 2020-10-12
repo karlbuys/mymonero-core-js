@@ -124,6 +124,7 @@ set_target_properties(
     boost_thread PROPERTIES IMPORTED_LOCATION
     ${boost_DIR}/lib/libboost_thread.a
 )
+# -s \"BINARYEN_TRAP_MODE='clamp'\"
 #
 #
 set (
@@ -138,7 +139,6 @@ set (
 -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
 -s ASSERTIONS=2 \
 -s EXIT_RUNTIME=0 \
--s \"BINARYEN_TRAP_MODE='clamp'\" \
 -s PRECISE_F32=1 \
 -s DISABLE_EXCEPTION_CATCHING=0 \
 -s EXCEPTION_DEBUG=1 \
@@ -157,13 +157,12 @@ set (
 set(
     EMCC_LINKER_FLAGS__ASMJS
     "${EMCC_LINKER_FLAGS___BASE} \
--s WASM=0 \
+-s WASM=1 \
 -Os \
 --separate-asm \
 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 \
 -s ALLOW_MEMORY_GROWTH=0 \
---memory-init-file 0 \
--s SEPARATE_ASM_MODULE_NAME=asmjs \
+--memory-init-file 0 
 "
     # --memory-init-file is explicitly set to 0 because optimization level is Oz, and some clients like React Native have trouble loading .mem files
     # .... it also didn't seem to have a giant impact on perf. but this should be tested again
@@ -185,13 +184,13 @@ set(
 #
 #
 message(STATUS "EMCC_LINKER_FLAGS__WASM ${EMCC_LINKER_FLAGS__WASM}")
-message(STATUS "EMCC_LINKER_FLAGS__ASMJS ${EMCC_LINKER_FLAGS__ASMJS}")
+#message(STATUS "EMCC_LINKER_FLAGS__ASMJS ${EMCC_LINKER_FLAGS__ASMJS}")
 #
 add_executable(MyMoneroCoreCpp_WASM ${SRC_FILES})
-add_executable(MyMoneroCoreCpp_ASMJS ${SRC_FILES})
+#add_executable(MyMoneroCoreCpp_ASMJS ${SRC_FILES})
 #
 set_target_properties(MyMoneroCoreCpp_WASM PROPERTIES LINK_FLAGS "${EMCC_LINKER_FLAGS__WASM}")
-set_target_properties(MyMoneroCoreCpp_ASMJS PROPERTIES LINK_FLAGS "${EMCC_LINKER_FLAGS__ASMJS}")
+#set_target_properties(MyMoneroCoreCpp_ASMJS PROPERTIES LINK_FLAGS "${EMCC_LINKER_FLAGS__ASMJS}")
 #
 # set_target_properties(MyMoneroCoreCpp_WASM PROPERTIES SUFFIX ".html")
 # set_target_properties(MyMoneroCoreCpp_ASMJS PROPERTIES SUFFIX ".html")
@@ -216,12 +215,12 @@ target_link_libraries(
     #
     ${log-lib}
 )
-target_link_libraries(
-    MyMoneroCoreCpp_ASMJS
-    #
-    boost_chrono
-    boost_system
-    boost_thread
-    #
-    ${log-lib}
-)
+#target_link_libraries(
+#    MyMoneroCoreCpp_ASMJS
+#    #
+#    boost_chrono
+#    boost_system
+#    boost_thread
+#    #
+#    ${log-lib}
+#)
